@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mButtonUploadImage = findViewById(R.id.upload_image);
         mEditText = findViewById(R.id.image_edit_text);
         mTextViewShowUploads = findViewById(R.id.show_uploads);
+        mProgressBar = findViewById(R.id.progress_bar);
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
         firebaseFirestore = FirebaseFirestore.getInstance();
