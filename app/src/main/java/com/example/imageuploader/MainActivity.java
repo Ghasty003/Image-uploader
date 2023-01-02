@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -47,12 +49,16 @@ public class MainActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.image_view);
         mButtonUploadImage = findViewById(R.id.upload_image);
         mEditText = findViewById(R.id.image_edit_text);
+        mTextViewShowUploads = findViewById(R.id.show_uploads);
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
         firebaseFirestore = FirebaseFirestore.getInstance();
 
         mButtonChooseImage.setOnClickListener(view -> openImageChooser());
         mButtonUploadImage.setOnClickListener(view -> uploadFile());
+
+        mTextViewShowUploads.setOnClickListener(view -> startActivity(new Intent(MainActivity.this, ImageLists.class)));
+
     }
 
     public void openImageChooser() {
@@ -68,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == PICk_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             mImageUri = data.getData();
-            Picasso.with(this).load(mImageUri).into(mImageView);
+            Glide.with(this).load(mImageUri).into(mImageView);
         }
     }
 
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
 
-                    uploads.setImageUrl(downloadUri);
+                    uploads.setImageUrl(downloadUri.toString());
                     uploads.setName(name);
 
                     DocumentReference documentReference;

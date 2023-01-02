@@ -4,7 +4,7 @@ import android.net.Uri;
 
 public class Uploads {
    String name;
-   Uri imageUrl;
+   String imageUrl;
 
     public Uploads() {
     }
@@ -17,11 +17,13 @@ public class Uploads {
         this.name = name;
     }
 
-    public Uri getImageUrl() {
+
+
+    public String getImageUrl() {
         return imageUrl;
     }
 
-    public void setImageUrl(Uri imageUrl) {
+    public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 }
