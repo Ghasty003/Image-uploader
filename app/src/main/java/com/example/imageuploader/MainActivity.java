@@ -1,14 +1,9 @@
 package com.example.imageuploader;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -18,16 +13,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri mImageUri;
 
     private StorageReference storageReference;
+    private FirebaseFirestore firebaseFirestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         mEditText = findViewById(R.id.image_edit_text);
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
+        firebaseFirestore = FirebaseFirestore.getInstance();
 
         mButtonChooseImage.setOnClickListener(view -> openImageChooser());
         mButtonUploadImage.setOnClickListener(view -> uploadFile());
@@ -82,6 +80,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadFile() {
+
+        String name = mEditText.getText().toString();
+
+        Uploads uploads = new Uploads();
+
         if (mImageUri != null) {
             StorageReference fileRef = storageReference.child(System.currentTimeMillis() + "." + getFileExtension(mImageUri));
             fileRef.putFile(mImageUri).continueWithTask(task -> {
@@ -93,8 +96,24 @@ public class MainActivity extends AppCompatActivity {
             }).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     Uri downloadUri = task.getResult();
-                    Toast.makeText(MainActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
-                    Log.d("UPLOADTask", downloadUri.toString());
+
+                    uploads.setImageUrl(downloadUri);
+                    uploads.setName(name);
+
+                    DocumentReference documentReference;
+
+                    documentReference = Utility.getCollectionReference().document();
+
+                    documentReference.set(uploads).addOnCompleteListener(task1 -> {
+                        if (!task1.isSuccessful()) {
+                            Toast.makeText(this, task1.getException().getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Toast.makeText(MainActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
+                        Log.d("UPLOADTask", downloadUri.toString());
+                    });
+
                 } else {
                     Toast.makeText(MainActivity.this, "Upload failed", Toast.LENGTH_SHORT).show();
                 }

@@ -16,6 +16,9 @@
         android:theme="@style/Theme.ImageUploader"
         tools:targetApi="31">
         <activity
+            android:name=".ImageLists"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

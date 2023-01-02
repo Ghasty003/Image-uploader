@@ -1,36 +1,27 @@
 package com.example.imageuploader;
 
+import android.net.Uri;
+
 public class Uploads {
-    String mName;
-    String mImageUrl;
+   String name;
+   Uri imageUrl;
 
     public Uploads() {
-
     }
 
-    public Uploads(String mName, String mImageUrl) {
-
-        if (mName.trim().equals("")) {
-            mName = "No name";
-        }
-
-        this.mName = mName;
-        this.mImageUrl = mImageUrl;
+    public String getName() {
+        return name;
     }
 
-    public String getmName() {
-        return mName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setmName(String mName) {
-        this.mName = mName;
+    public Uri getImageUrl() {
+        return imageUrl;
     }
 
-    public String getmImageUrl() {
-        return mImageUrl;
-    }
-
-    public void setmImageUrl(String mImageUrl) {
-        this.mImageUrl = mImageUrl;
+    public void setImageUrl(Uri imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
